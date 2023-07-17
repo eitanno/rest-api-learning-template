@@ -51,6 +51,27 @@ public class PlaylistService
         return;
     }
 
+    public void Put(string id, Playlist playlist)
+    {
+        var playlistCollection = Get();
+        if (playlistCollection.TryGetValue(id, out var p))
+        {
+            p.movieIds = playlist.movieIds;
+            p.username = playlist.username;
+            cache.Set("playlists", playlistCollection);
+            return;
+        }
+        throw new KeyNotFoundException($"Key '{id}' not found in the dictionary.");
+    }
+
+    public void Delete(string id)
+    {
+        var playlistCollection = Get();
+        playlistCollection.Remove(id);
+        cache.Set("playlists", playlistCollection);
+        return;
+    }
+
     public void AddToPlaylistAsync(string id, string movieId)
     {
         var playlistCollection = Get();
@@ -61,13 +82,6 @@ public class PlaylistService
             return;
         }
         throw new KeyNotFoundException($"Key '{id}' not found in the dictionary.");
-    }
-    public void Delete(string id)
-    {
-        var playlistCollection = Get();
-        playlistCollection.Remove(id);
-        cache.Set("playlists", playlistCollection);
-        return;
     }
 
 }
